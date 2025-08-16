@@ -6,6 +6,7 @@ const isProtectedRoute = createRouteMatcher([
   '/forum(.*)',
   '/api/auth(.*)', // protected API
   '/',             // protect home (optional — remove if public)
+  
 ])
 
 export default clerkMiddleware(async (auth, req) => {
@@ -23,5 +24,7 @@ export const config = {
     '/api/auth/:path*',
     '/', // remove if home should be public
     '/public/:path*',
+    '/api/:path*',
+    '/inngest/:path*'
   ],
 }
