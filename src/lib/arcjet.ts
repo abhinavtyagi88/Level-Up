@@ -7,7 +7,7 @@ export const aj = arcjet({
     fixedWindow({
       mode: "LIVE",
       window: "1h",
-      max: 60,
+      max: 69,
       //characteristics: ["ip.src"],
     }),
     fixedWindow({

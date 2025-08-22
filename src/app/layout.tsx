@@ -9,6 +9,7 @@ import {
   UserButton,
 } from '@clerk/nextjs'
 import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 import './globals.css'
 
 // export const metadata: Metadata = {
@@ -27,6 +28,14 @@ const headerRoutes = [
   "/inngest/:path*",
 ]
 
+// Navigation items with their routes
+const navItems = [
+  { name: 'Home', href: '/' },
+  { name: 'Dashboard', href: '/dashboard' },
+  { name: 'Forum', href: '/forum' },
+  { name: 'Public', href: '/public' },
+]
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -38,18 +47,57 @@ export default function RootLayout({
         <body>
           {/* Header will be conditionally rendered based on route */}
           <HeaderRouteWrapper routes={headerRoutes}>
-            <header className="flex justify-end items-center p-4 gap-4 h-16">
-              <SignedOut>
-                <SignInButton />
-                <SignUpButton>
-                  <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
-                    Sign Up
-                  </button>
-                </SignUpButton>
-              </SignedOut>
-              <SignedIn>
-                <UserButton />
-              </SignedIn>
+            <header className="border-b border-gray-200 bg-white">
+              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="flex h-16 items-center justify-between">
+                  {/* Logo and Navigation Tabs */}
+                  <div className="flex items-center gap-8">
+                    {/* Logo */}
+                    <div className="flex-shrink-0">
+                      <h1 className="text-xl font-bold text-gray-900">Your App</h1>
+                    </div>
+                    
+                    {/* Navigation Tabs */}
+                    <nav className="hidden md:flex space-x-1">
+                      {navItems.map((item) => (
+                        <NavLink key={item.name} href={item.href}>
+                          {item.name}
+                        </NavLink>
+                      ))}
+                    </nav>
+                  </div>
+
+                  {/* Auth Buttons */}
+                  <div className="flex items-center gap-4">
+                    <SignedOut>
+                      <SignInButton>
+                        <button className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                          Sign In
+                        </button>
+                      </SignInButton>
+                      <SignUpButton>
+                        <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm px-4 py-2 cursor-pointer hover:bg-[#5a3fe0] transition-colors">
+                          Sign Up
+                        </button>
+                      </SignUpButton>
+                    </SignedOut>
+                    <SignedIn>
+                      <UserButton />
+                    </SignedIn>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mobile Navigation (optional) */}
+              <div className="md:hidden border-t border-gray-200">
+                <nav className="flex space-x-1 overflow-x-auto py-2 px-4">
+                  {navItems.map((item) => (
+                    <MobileNavLink key={item.name} href={item.href}>
+                      {item.name}
+                    </MobileNavLink>
+                  ))}
+                </nav>
+              </div>
             </header>
           </HeaderRouteWrapper>
           {children}
@@ -74,8 +122,8 @@ function HeaderRouteWrapper({
   // Check if current path matches any of the header routes
   const shouldShowHeader = routes.some(route => {
     const regexPattern = route
-      .replace(/:\w+\*/g, '.*') // Convert :path* to .*
-      .replace(/:\w+/g, '[^/]+') // Convert :param to [^/]+
+      .replace(/:\w+\*/g, '.*')
+      .replace(/:\w+/g, '[^/]+')
     const regex = new RegExp(`^${regexPattern}$`)
     return regex.test(pathname || '')
   })
@@ -85,4 +133,44 @@ function HeaderRouteWrapper({
   }
 
   return <>{children}</>
+}
+
+// Navigation Link Component with active state
+function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+  'use client'
+  const pathname = usePathname()
+  const isActive = pathname === href || pathname?.startsWith(`${href}/`)
+
+  return (
+    <Link
+      href={href}
+      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+        isActive
+          ? 'bg-gray-100 text-gray-900 border-b-2 border-[#6c47ff]'
+          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+      }`}
+    >
+      {children}
+    </Link>
+  )
+}
+
+// Mobile Navigation Link Component
+function MobileNavLink({ href, children }: { href: string; children: React.ReactNode }) {
+  'use client'
+  const pathname = usePathname()
+  const isActive = pathname === href || pathname?.startsWith(`${href}/`)
+
+  return (
+    <Link
+      href={href}
+      className={`px-3 py-2 rounded-md text-xs font-medium whitespace-nowrap ${
+        isActive
+          ? 'bg-gray-100 text-gray-900 border-b-2 border-[#6c47ff]'
+          : 'text-gray-600 hover:text-gray-900'
+      }`}
+    >
+      {children}
+    </Link>
+  )
 }

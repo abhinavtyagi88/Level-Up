@@ -34,7 +34,8 @@ export default function PublicPage() {
 
   return (
     <main style={{ padding: 20 }}>
-      <h1>Public Page</h1>
+      <h1 className="text-6xl font-bold">Public Page</h1>
+
       <p>This page fetches data from /api/public</p>
       <pre>{JSON.stringify(data, null, 2)}</pre>
      
